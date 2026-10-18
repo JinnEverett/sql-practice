@@ -1,0 +1,2 @@
+ALTER TABLE p04.tag_event ALTER COLUMN tag SET STATISTICS 300;
+ANALYZE p04.tag_event (tag);

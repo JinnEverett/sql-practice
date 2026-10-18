@@ -1,0 +1,1 @@
+ALTER TABLE p10b.t7 ADD CONSTRAINT t7_ck CHECK (p10b.slow_ok(id));

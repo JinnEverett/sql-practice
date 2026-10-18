@@ -1,0 +1,4 @@
+-- db: lab
+-- mode: manual
+-- Demo: tái hiện deadlock bằng hai cửa sổ psql (A rồi B, đúng thứ tự dòng). Log server hiện "deadlock detected" kèm câu lệnh của cả hai tiến trình.
+-- (không chạy gì ở đây; xem ex06.md)
