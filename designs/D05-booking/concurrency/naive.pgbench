@@ -1,0 +1,6 @@
+-- Check-then-insert ở tầng SQL, KHÔNG có constraint: đọc "chưa ai đặt" rồi chèn. Dưới Read Committed hai client cùng thấy trống.
+SELECT (extract(epoch FROM clock_timestamp()) * 20)::bigint AS slot \gset
+INSERT INTO d05.naive_bookings (resource_id, period)
+SELECT 1, r FROM (SELECT tstzrange(timestamptz '2030-01-01' + (:slot % 1000000) * interval '1 hour',
+                                   timestamptz '2030-01-01' + (:slot % 1000000 + 1) * interval '1 hour') AS r) x
+WHERE NOT EXISTS (SELECT 1 FROM d05.naive_bookings n WHERE n.resource_id = 1 AND n.period && x.r);
