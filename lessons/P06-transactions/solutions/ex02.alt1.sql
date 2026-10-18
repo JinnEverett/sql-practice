@@ -1,0 +1,5 @@
+BEGIN;
+INSERT INTO p06.sku VALUES ('B2', 'hàng B');
+INSERT INTO p06.sku VALUES ('A1', 'hàng A trùng mã') ON CONFLICT DO NOTHING;
+INSERT INTO p06.sku VALUES ('C3', 'hàng C');
+COMMIT;
