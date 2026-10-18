@@ -1,0 +1,5 @@
+-- Giống safe nhưng trừ người gửi rồi mới cộng người nhận, không sắp thứ tự khóa => deadlock
+\set a random(2, 11)
+\set off random(1, 9)
+\set b (:a - 2 + :off) % 10 + 2
+SELECT d04.transfer_naive('pgb-' || gen_random_uuid()::text, :a, :b, 1000);
