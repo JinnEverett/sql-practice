@@ -1,0 +1,3 @@
+-- 16 mảnh: client chọn mảnh ngẫu nhiên; đọc = SUM(n)
+\set s random(0, 15)
+UPDATE d06.demo_shards SET n = n + 1 WHERE id = 1 AND shard = :s;

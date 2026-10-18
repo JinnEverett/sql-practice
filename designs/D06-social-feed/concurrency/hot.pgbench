@@ -1,0 +1,2 @@
+-- 1 dòng counter duy nhất: mọi client xếp hàng trên row lock
+UPDATE d06.demo_hot SET n = n + 1 WHERE id = 1;
