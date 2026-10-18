@@ -1,0 +1,1 @@
+select user_id, count(*) as n_orders, sum(total_amount) as total_spent from orders where status = 'delivered' and created_at >= '2025-01-01 +07' and created_at < '2026-01-01 +07' group by 1 having count(*) >= 20 and sum(total_amount) >= 150000000 order by total_spent desc;

@@ -1,0 +1,1 @@
+select coalesce(discount_code,'(không mã)') as code_label, count(*) as n_orders, round(avg(discount_amount)) as avg_discount, sum(discount_amount) as total_discount from orders group by 1 order by n_orders desc;

@@ -1,0 +1,1 @@
+select order_id, count(*) as n_lines, sum(quantity) as total_qty, string_agg(product_id::text,',' order by line_no) as product_ids from order_items where order_id >= 1 and order_id <= 10 group by 1 order by order_id asc;

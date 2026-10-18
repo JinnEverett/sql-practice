@@ -1,0 +1,54 @@
+# Postgres cho không gian luyện SQL.
+# Khởi động:  docker compose -f env/docker-compose.yml up -d
+# Dừng:       docker compose -f env/docker-compose.yml stop
+# Xóa sạch:   docker compose -f env/docker-compose.yml down -v   (MẤT toàn bộ dữ liệu)
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: sql-practice-pg
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"          # host 5433 để không đụng Postgres cài sẵn trên máy
+    volumes:
+      # Từ Postgres 18, image chính thức mount ở /var/lib/postgresql (không còn /data)
+      - pgdata:/var/lib/postgresql
+      # Chỉ chạy khi volume còn trống (lần đầu khởi tạo)
+      - ./init:/docker-entrypoint-initdb.d:ro
+    # Parallel query dùng /dev/shm; mặc định 64MB của Docker quá nhỏ
+    shm_size: 1gb
+    command:
+      - postgres
+      # Thống kê query cho Tier O (O03)
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      # CỐ Ý ĐỂ NHỎ: shop_l (~10M dòng) phải vượt bộ nhớ đệm để thấy hiệu ứng "không vừa RAM" (P10)
+      - -c
+      - shared_buffers=256MB
+      # Mặc định của Postgres; ghi rõ ra vì P10 sẽ thay đổi nó để thấy sort/hash tràn ra đĩa
+      - -c
+      - work_mem=4MB
+      # Tạo index / thêm FK trên bảng lớn nhanh hơn
+      - -c
+      - maintenance_work_mem=256MB
+      # Nạp dữ liệu lớn ít checkpoint hơn
+      - -c
+      - max_wal_size=4GB
+      # EXPLAIN (ANALYZE, BUFFERS) hiện thêm thời gian I/O
+      - -c
+      - track_io_timing=on
+      # Server chạy UTC như ngoài đời; dữ liệu mua sắm sinh theo giờ Việt Nam (Tier I05 sẽ khai thác)
+      - -c
+      - timezone=UTC
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:

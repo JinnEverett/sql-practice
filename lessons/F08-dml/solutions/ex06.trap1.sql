@@ -1,0 +1,2 @@
+DELETE FROM f08.subscribers s USING f08.subscribers k
+WHERE lower(trim(k.email)) = lower(trim(s.email)) AND k.created_at < s.created_at;

@@ -1,0 +1,1 @@
+select user_id from events where user_id is not null and event_type in ('add_to_cart','checkout') group by user_id having count(distinct event_type) >= 2 except select distinct user_id from orders order by user_id asc;

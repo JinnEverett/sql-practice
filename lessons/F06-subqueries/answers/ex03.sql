@@ -1,0 +1,1 @@
+select id, full_name from users where id in (select distinct user_id from orders where id in (select distinct order_id from order_items where product_id IN (select id from products where brand = 'Apple'))) order by id asc;

@@ -1,0 +1,7 @@
+node_modules/
+.run/
+.build/
+*.log
+.env
+.claude/worktrees/
+.claude/settings.local.json

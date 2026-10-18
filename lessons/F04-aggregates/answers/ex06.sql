@@ -1,0 +1,1 @@
+select date_trunc('month', created_at AT TIME ZONE 'Asia/Ho_Chi_Minh'):: Date as month, count(*) as n_orders, sum(total_amount) as revenue from orders where status not in ('refunded', 'cancelled') and created_at >= '2026-01-01 +07' and created_at < '2026-10-01 +07'group by 1 order by month asc;
