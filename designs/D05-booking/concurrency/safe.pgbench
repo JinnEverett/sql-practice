@@ -1,0 +1,5 @@
+-- 50 client tranh cùng một khung giờ (khung đổi mỗi 50ms). Dùng hold_slot() => EXCLUDE constraint phân xử.
+SELECT (extract(epoch FROM clock_timestamp()) * 20)::bigint AS slot \gset
+SELECT d05.hold_slot(1::bigint, :client_id + 1,
+       tstzrange(timestamptz '2030-01-01' + (:slot % 1000000) * interval '1 hour',
+                 timestamptz '2030-01-01' + (:slot % 1000000 + 1) * interval '1 hour'));
