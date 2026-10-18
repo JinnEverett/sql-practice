@@ -1,0 +1,8 @@
+-- Đọc-rồi-ghi ở app: kiểu lỗi kinh điển. Mỗi client "bán" 1 món nếu thấy còn hàng.
+BEGIN;
+SELECT on_hand AS oh FROM d03.demo_stock WHERE product_id = 1 \gset
+\if :oh > 0
+UPDATE d03.demo_stock SET on_hand = :oh - 1 WHERE product_id = 1;
+INSERT INTO d03.demo_sales (product_id) VALUES (1);
+\endif
+COMMIT;
