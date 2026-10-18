@@ -19,7 +19,8 @@ case "$scale" in
 esac
 db="${2:-shop_$scale}"
 
-pg() { docker exec -i sql-practice-pg psql -U postgres -X -q -v ON_ERROR_STOP=1 "$@"; }
+source "$root/tools/pg-runner.sh"
+pg() { sql_pg -X -q -v ON_ERROR_STOP=1 "$@"; }
 
 echo "==> Tạo $db (N = $N đơn hàng)"
 pg -d postgres -c "DROP DATABASE IF EXISTS $db WITH (FORCE)"

@@ -45,7 +45,8 @@ if [ ! -f "$ans" ]; then
   echo "Chưa có bài làm: $ans"; exit 2
 fi
 
-pg() { docker exec -i sql-practice-pg psql -U postgres -d "$db" -X -q -v ON_ERROR_STOP=1 "$@"; }
+source "$(dirname "${BASH_SOURCE[0]}")/pg-runner.sh"
+pg() { sql_pg -d "$db" -X -q -v ON_ERROR_STOP=1 "$@"; }
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 silent_setup() { if [ $reset -eq 1 ] && [ -f "$setup" ]; then echo '\o /dev/null'; echo '\set QUIET on'; cat "$setup"; echo; echo '\o'; fi; }
 strip_cr() { tr -d '\r' < "$1"; }

@@ -32,7 +32,8 @@ done
 [ -n "$name" ] || name="$(basename "$file" .sql)"
 [ "$cold" -eq 1 ] && runs=1
 
-pg() { docker exec -i sql-practice-pg psql -U postgres -X -q -v ON_ERROR_STOP=1 "$@"; }
+source "$here/../tools/pg-runner.sh"
+pg() { sql_pg -X -q -v ON_ERROR_STOP=1 "$@"; }
 wait_ready() { until docker exec sql-practice-pg pg_isready -U postgres -q 2>/dev/null; do sleep 1; done; }
 
 set_sql=""

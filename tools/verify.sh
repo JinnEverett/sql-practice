@@ -6,6 +6,7 @@
 #   bash tools/verify.sh lessons/I03-*       # chỉ vài bài
 set -u
 export MSYS_NO_PATHCONV=1
+source "$(dirname "${BASH_SOURCE[0]}")/pg-runner.sh"
 root=$(cd "$(dirname "$0")/.." && pwd)
 if [ $# -gt 0 ]; then dirs=("$@"); else mapfile -t dirs < <(ls -d "$root"/lessons/*/solutions "$root"/designs/*/solutions 2>/dev/null | xargs -n1 dirname); fi
 pass=0; fail=0; manual=0; failed=()
@@ -22,7 +23,7 @@ for d in "${dirs[@]}"; do
       [ -f "$d/solutions/ex$nn.md" ] || { echo "❌ $tag: thiếu solutions/ex$nn.md"; fail=$((fail+1)); failed+=("$tag"); continue; }
       db=$(sed -n 's/^-- db:[[:space:]]*\([^[:space:]]*\).*/\1/p' "$sol" | head -1 | tr -d '\r'); db=${db:-shop_s}
       if grep -qv '^\s*\(--.*\)\?$' "$sol"; then
-        if ! tr -d '\r' < "$sol" | docker exec -i sql-practice-pg psql -U postgres -d "$db" -X -q -v ON_ERROR_STOP=1 > /dev/null 2> /tmp/verify_err; then
+        if ! tr -d '\r' < "$sol" | sql_pg -d "$db" -X -q -v ON_ERROR_STOP=1 > /dev/null 2> /tmp/verify_err; then
           echo "❌ $tag: demo SQL lỗi: $(grep ERROR /tmp/verify_err | head -1)"; fail=$((fail+1)); failed+=("$tag"); continue
         fi
       fi
