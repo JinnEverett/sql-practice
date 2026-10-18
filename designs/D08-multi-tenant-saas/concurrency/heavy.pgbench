@@ -1,0 +1,2 @@
+-- Cá voi: báo cáo quét cả tenant (400k dòng)
+SELECT count(*) FROM d08.tasks WHERE tenant_id = 9 AND status = 'open';
