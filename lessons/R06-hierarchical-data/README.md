@@ -41,7 +41,7 @@ SELECT * FROM cat WHERE path @> '2.16.34';   -- tổ tiên của 34 (cả chính
 SELECT nlevel(path), subpath(path, 1), path || 'x' FROM cat;
 CREATE INDEX ON cat USING gist (path);
 ```
-- Nhãn chỉ gồm chữ, số, `_` (và `-` từ Postgres 16), tối đa 1000 byte mỗi nhãn. Dùng `id` làm nhãn thì đổi tên nút không ảnh hưởng path.
+- Nhãn chỉ gồm chữ, số, `_` (và `-` từ Postgres 16), tối đa 1000 ký tự mỗi nhãn (đã thử trên 18.6). Dùng `id` làm nhãn thì đổi tên nút không ảnh hưởng path.
 - Di chuyển cây con = đổi tiền tố path của mọi hậu duệ (ex06); phải làm cùng transaction với việc đổi `parent_id` nếu bạn giữ cả hai cột.
 - Phải **giữ đồng bộ** path với `parent_id` bằng trigger hoặc chỉ giữ path.
 
