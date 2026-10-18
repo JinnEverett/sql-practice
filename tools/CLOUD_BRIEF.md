@@ -40,21 +40,27 @@ Tier D: `designs/<ID>-<slug>/` với `BRIEF.md` (đề 2–3 câu, cố ý mơ h
 - Module ngoài nhóm của bạn. Ngoại lệ: `tools/` (xem dưới), `tools/CONTENT_PLAN.md` (dòng của nhóm bạn) và `datasets/shop/README.md` (chỉ **thêm** ghi chú, không đổi tỉ lệ dữ liệu đã chốt).
 - Cần đổi `tools/lib.sql` / `check.sh` / `verify.sh`: chỉ **thêm** hàm/tùy chọn mới, không đổi chữ ký cũ; nêu rõ trong báo cáo. Nhiều agent cùng sửa các file này sẽ conflict, nên thêm vào cuối file, kèm comment tên nhóm.
 
-## Môi trường verify (không có Docker trên cloud)
-Scripts đọc `SQL_PG` (xem `tools/pg-runner.sh`): mặc định `docker`, trên cloud dùng `local`.
+## Môi trường verify (cloud VM Ubuntu 24.04: có Docker và PostgreSQL 16 cài sẵn)
+Scripts đọc `SQL_PG` (xem `tools/pg-runner.sh`): `docker` (mặc định, container `sql-practice-pg`) hoặc `local` (psql trực tiếp).
+
+**Cách ưu tiên: Postgres 18 qua Docker (đúng phiên bản của người học; Docker Hub nằm trong danh sách Trusted).**
 ```bash
-# 1) Postgres cài sẵn (apt/pgdg hoặc có sẵn). Tạo DB mẫu và các shop_*:
-export SQL_PG=local PGHOST=localhost PGPORT=5432 PGUSER=postgres PGPASSWORD=postgres
-psql -f env/init/01-init.sql                       # tạo lab, shop_template (cần extension contrib)
+docker compose -f env/docker-compose.yml up -d     # container sql-practice-pg, init tạo lab + shop_template
+until docker exec sql-practice-pg pg_isready -U postgres -q; do sleep 1; done
 bash datasets/shop/build.sh xs && bash datasets/shop/build.sh s
 bash datasets/shop/build.sh m                      # 1M orders, ~900MB, vài phút: chỉ nhóm P/R/D cần
-# KHÔNG sinh shop_l (10M, ~9GB): bài cần shop_l thì ghi "chưa verify trên shop_l" trong báo cáo.
-
-# 2) Kiểm định module
 bash tools/verify.sh lessons/<ID>-*                # mọi đáp án tự khớp, mọi trap bị bắt, số dòng đúng
 ```
-Bài P cần "không vừa RAM": đặt `shared_buffers`/`work_mem` nhỏ trong `setup`/bằng `SET` cục bộ trong bài, và ghi giới hạn của phép đo (cloud ≠ máy người học) trong `review`-style note của `README`.
-Nếu cloud không có Postgres: vẫn soạn đầy đủ nhưng ghi **mọi** module là "chưa verify" trong báo cáo.
+**Dự phòng: PostgreSQL 16 cài sẵn** (không có tính năng riêng của 18; ghi "chưa verify trên 18" nếu bài dùng chúng):
+```bash
+service postgresql start
+export SQL_PG=local PGHOST=localhost PGPORT=5432 PGUSER=postgres PGPASSWORD=postgres   # đặt mật khẩu: sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres'"
+psql -f env/init/01-init.sql                       # cần extension contrib (postgresql-contrib)
+```
+KHÔNG sinh `shop_l` (10M, ~9GB): bài cần shop_l thì ghi "chưa verify trên shop_l" trong báo cáo.
+Lệnh foreground mặc định chờ 2 phút (tối đa 10 phút): chạy `build.sh m` và `verify.sh` dài ở nền (`nohup … &`) rồi đọc log.
+Bài P cần "không vừa RAM": đặt `shared_buffers`/`work_mem` nhỏ trong `setup`/bằng `SET` cục bộ trong bài, và ghi giới hạn của phép đo (cloud ≠ máy người học) trong `README`.
+Nếu không dựng được Postgres: vẫn soạn đầy đủ nhưng ghi **mọi** module là "chưa verify" trong báo cáo.
 
 ## Git
 - Branch của bạn: `content/<nhóm>` (nhóm: `p`, `r`, `o`, `d`). Commit nhỏ theo module: `feat(P02): b-tree index`. Push thường xuyên.
