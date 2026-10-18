@@ -87,3 +87,42 @@ BEGIN
   EXECUTE pg_temp.clean(q) INTO r;
   RETURN r;
 END $$;
+
+-- ===== Thêm bởi nhóm O (O01): chạy câu lệnh với tư cách một role khác =====
+-- Chỉ thêm, không đổi hàm cũ. Dùng SET LOCAL ROLE nên phải đang ở trong transaction (BEGIN … ROLLBACK của check.sql).
+-- as_ok(role, q): q chạy thành công dưới role? · as_fails(role, q, sqlstate): q lỗi với SQLSTATE bắt đầu bằng `state`?
+-- as_val(role, q): giá trị scalar (text) của q dưới role; lỗi → trả 'ERROR:<sqlstate>'.
+CREATE FUNCTION pg_temp.as_ok(r text, q text) RETURNS boolean LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE format('SET LOCAL ROLE %I', r);
+  EXECUTE q;
+  RESET ROLE;
+  RETURN true;
+EXCEPTION WHEN others THEN
+  RESET ROLE;
+  RAISE NOTICE 'INFO: [%] lỗi dưới role %: %', left(q, 80), r, SQLERRM;
+  RETURN false;
+END $$;
+
+CREATE FUNCTION pg_temp.as_fails(r text, q text, state text DEFAULT '') RETURNS boolean LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE format('SET LOCAL ROLE %I', r);
+  EXECUTE q;
+  RESET ROLE;
+  RETURN false;
+EXCEPTION WHEN others THEN
+  RESET ROLE;
+  RETURN SQLSTATE LIKE state || '%';
+END $$;
+
+CREATE FUNCTION pg_temp.as_val(r text, q text) RETURNS text LANGUAGE plpgsql AS $$
+DECLARE v text; qc text := pg_temp.clean(q);
+BEGIN
+  EXECUTE format('SET LOCAL ROLE %I', r);
+  EXECUTE qc INTO v;
+  RESET ROLE;
+  RETURN v;
+EXCEPTION WHEN others THEN
+  RESET ROLE;
+  RETURN 'ERROR:' || SQLSTATE;
+END $$;

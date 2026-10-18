@@ -1,0 +1,4 @@
+CREATE ROLE o01_app LOGIN;
+GRANT USAGE ON SCHEMA o01 TO o01_app;
+GRANT SELECT ON o01.customers TO o01_app;
+GRANT SELECT, INSERT, UPDATE (status) ON o01.orders TO o01_app;
