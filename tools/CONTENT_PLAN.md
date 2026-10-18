@@ -14,4 +14,4 @@ Trạng thái: ⬜ chưa soạn · 🟡 đang soạn · ✅ soạn xong (đủ R
 | P | P01–P10 | ⬜ | nhóm `p` |
 | R | R01–R12 | ⬜ | nhóm `r` |
 | O | O01–O06 | ⬜ | nhóm `o` |
-| D | D01–D10 | ⬜ | nhóm `d`, thư mục `designs/` |
+| D | D01–D10 | 🧪 | nhóm `d`, thư mục `designs/`: BRIEF, INTERVIEWER, REFERENCE, RUBRIC, schema.sql, queries.sql; `bash tools/verify-designs.sh` xanh (verify.sh không áp dụng cho Tier D). Xem `tools/reports/d.md` |
