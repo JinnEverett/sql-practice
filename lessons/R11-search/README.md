@@ -47,7 +47,7 @@ Từ khớp ở tiêu đề (A) đẩy rank cao hơn ở nội dung (B) (ex03). 
 
 ## 4. Tìm mờ với `pg_trgm`
 ```sql
-SELECT similarity('op lung samsug', 'op lung samsung');     -- 0.76 (tỉ lệ bộ ba ký tự chung)
+SELECT similarity('op lung samsug', 'op lung samsung');     -- 0.81 (tỉ lệ bộ ba ký tự chung)
 SELECT * FROM products WHERE lower(unaccent(name)) % 'op lung samsug';   -- similarity > 0.3, dùng được index
 CREATE INDEX ON users USING gin (full_name gin_trgm_ops);    -- phục vụ cả  ILIKE '%…%'  và  %
 ```
