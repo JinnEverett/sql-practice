@@ -1,0 +1,1 @@
+ANALYZE p04.log;

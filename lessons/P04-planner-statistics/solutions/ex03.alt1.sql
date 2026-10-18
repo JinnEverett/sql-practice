@@ -1,0 +1,1 @@
+VACUUM (ANALYZE) p04.job;
