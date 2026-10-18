@@ -16,7 +16,7 @@ Số đo: Postgres 18.6 Docker, `lab.d03` (300k đơn, 600k dòng hàng). Thí n
 
 ## 3. Ước lượng
 - Thường ngày 50k đơn/ngày ≈ 0.6 đơn/s. Flash sale: 5k/60s ≈ **83 đơn/s**, mỗi đơn ~3–6 dòng ghi ⇒ vài trăm ghi/s: Postgres đơn lẻ làm tốt. **Vấn đề không phải thông lượng tổng mà là tranh chấp trên vài dòng tồn kho.**
-- 10 năm × 50k × 365 = **182M đơn**; đo `orders` 58 MB/300k = ~193 B/đơn (gồm 3 index), `order_items` ~110 B/dòng ⇒ ~35 GB `orders` + ~120 GB items (2.5 dòng/đơn) ⇒ cần partition/archive theo năm.
+- 10 năm × 50k × 365 = **182M đơn**; đo `orders` 58 MB/300k = ~200 B/đơn (gồm 3 index), `order_items` ~110 B/dòng ⇒ ~36 GB `orders` + ~50 GB items (giả định 2.5 dòng/đơn) ⇒ cần partition/archive theo năm.
 - Hot row: các giao dịch cùng dòng xếp hàng theo row lock ⇒ thông lượng ≈ 1/(thời gian giữ lock). Giữ lock càng ngắn (transaction chỉ chứa UPDATE tồn kho + vài INSERT) càng tốt: **đẩy việc chậm (gọi cổng thanh toán, gửi email) ra ngoài transaction**.
 
 ## 4. Data model
