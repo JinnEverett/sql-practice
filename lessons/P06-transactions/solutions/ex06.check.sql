@@ -9,7 +9,7 @@ SELECT replace(:'a1', ':me', '2') || E'\nSELECT pg_sleep(1);\n' || replace(:'a2'
 \pset tuples_only off
 \pset format aligned
 SELECT replace(:'a1', ':me', '1') AS q \gexec
-\! (psql -X -q -U postgres -d lab -f /tmp/p06_ex06_b.sql > /tmp/p06_ex06_b.out 2>&1 < /dev/null &)
+\! { psql -X -q -U postgres -d lab -f /tmp/p06_ex06_b.sql ; exit 0; } > /tmp/p06_ex06_b.out 2>&1 < /dev/null &
 \! sleep 2
 SELECT replace(:'a2', ':me', '1') AS q \gexec
 \! sleep 2

@@ -1,0 +1,1 @@
+VACUUM (VERBOSE) p07.bloat;
