@@ -1,0 +1,1 @@
+SELECT * FROM (VALUES ('SELECT','AccessShareLock'),('SELECT FOR UPDATE','RowExclusiveLock'),('UPDATE','RowExclusiveLock'),('CREATE INDEX','ShareLock'),('ALTER TABLE ADD COLUMN','AccessExclusiveLock')) AS x(stmt, table_lock_mode) ORDER BY 2, 1;

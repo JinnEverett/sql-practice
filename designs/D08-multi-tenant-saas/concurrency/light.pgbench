@@ -1,0 +1,2 @@
+-- Tenant nhỏ: một truy vấn điểm
+SELECT count(*) FROM d08.tasks WHERE tenant_id = 500 AND status = 'open';

@@ -1,0 +1,5 @@
+-- Writer: giao dịch giữ mở một lúc ngẫu nhiên (0-20ms) trước khi commit => id lớn có thể commit TRƯỚC id nhỏ
+BEGIN;
+INSERT INTO d09.demo_events DEFAULT VALUES;
+SELECT pg_sleep(random() * 0.02);
+COMMIT;

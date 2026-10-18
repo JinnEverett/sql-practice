@@ -126,3 +126,43 @@ EXCEPTION WHEN others THEN
   RESET ROLE;
   RETURN 'ERROR:' || SQLSTATE;
 END $$;
+
+-- ===== [nhóm r] Mô phỏng nhiều session bằng dblink (R04, R08, R10) =====
+-- Cần: CREATE EXTENSION IF NOT EXISTS dblink; (superuser, DB lab). Dữ liệu cần được COMMIT thì session khác mới thấy
+-- (bài dùng các hàm này thường `-- reset` và KHÔNG bọc trong BEGIN…ROLLBACK).
+-- Mở kết nối `conn` tới DB hiện tại rồi gửi q chạy nền (không chờ). q có thể gồm nhiều lệnh: 'BEGIN; …; SELECT pg_sleep(2); COMMIT'.
+CREATE FUNCTION pg_temp.bg_start(conn text, q text, db text DEFAULT current_database()) RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+  PERFORM dblink_connect(conn, format('dbname=%s user=postgres', db));
+  PERFORM dblink_send_query(conn, q);
+END $$;
+
+-- Chờ session nền xong. Trả về giá trị cột đầu của mọi kết quả nối bằng ' | ', hoặc 'ERROR <sqlstate>: <message>' nếu có lỗi.
+-- Lưu ý: kết quả SELECT 0 dòng làm vòng chờ dừng sớm, nên đặt SELECT cần đọc ở cuối chuỗi lệnh.
+CREATE FUNCTION pg_temp.bg_wait(conn text) RETURNS text LANGUAGE plpgsql AS $$
+DECLARE r text; n int; res text := ''; i int;
+BEGIN
+  FOR i IN 1..50 LOOP
+    SELECT count(*), string_agg(x, ',') INTO n, r FROM dblink_get_result(conn, true) AS t(x text);
+    EXIT WHEN n = 0;
+    res := res || CASE WHEN res = '' THEN '' ELSE ' | ' END || coalesce(r, '');
+  END LOOP;
+  PERFORM dblink_disconnect(conn);
+  RETURN res;
+EXCEPTION WHEN others THEN
+  BEGIN PERFORM dblink_disconnect(conn); EXCEPTION WHEN others THEN NULL; END;
+  RETURN 'ERROR ' || SQLSTATE || ': ' || SQLERRM;
+END $$;
+
+-- Chạy đồng bộ q trên một session khác (mở rồi đóng ngay), trả về giá trị cột đầu của dòng cuối (text) hoặc 'ERROR …'.
+CREATE FUNCTION pg_temp.bg_run(q text, db text DEFAULT current_database()) RETURNS text LANGUAGE plpgsql AS $$
+DECLARE r text;
+BEGIN
+  PERFORM dblink_connect('bg_run_tmp', format('dbname=%s user=postgres', db));
+  SELECT x INTO r FROM dblink('bg_run_tmp', q, true) AS t(x text) LIMIT 1;
+  PERFORM dblink_disconnect('bg_run_tmp');
+  RETURN r;
+EXCEPTION WHEN others THEN
+  BEGIN PERFORM dblink_disconnect('bg_run_tmp'); EXCEPTION WHEN others THEN NULL; END;
+  RETURN 'ERROR ' || SQLSTATE || ': ' || SQLERRM;
+END $$;

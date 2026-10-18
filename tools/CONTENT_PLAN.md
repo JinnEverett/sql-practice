@@ -11,7 +11,7 @@ Trạng thái: ⬜ chưa soạn · 🟡 đang soạn · ✅ soạn xong (đủ R
 | I | I01–I07 | 🧪 | có từ trước |
 | I | I08 | 🟡 | có `solutions/` + `setup.sql`, **thiếu README, exercises, hints** → nhóm `o` |
 | I | I09 | ⬜ | nhóm `o` |
-| P | P01–P10 | ⬜ | nhóm `p` |
-| R | R01–R12 | ⬜ | nhóm `r` |
+| P | P01–P10 (P10a, P10b) | 🧪 | nhóm `p`; `verify.sh` xanh trên Postgres 18.6 (71 đạt, 18 tự đối chiếu). Chưa verify trên `shop_l`. Xem `tools/reports/p.md` |
+| R | R01–R12 | 🧪 | nhóm `r` (branch `content/r`): `verify.sh` xanh trên Postgres 18.6 (86 đạt, 17 tự đối chiếu, 0 lỗi); chưa chạy ở `shop_l`. Chi tiết: `tools/reports/r.md` |
 | O | O01–O06 | ⬜ | nhóm `o` |
-| D | D01–D10 | ⬜ | nhóm `d`, thư mục `designs/` |
+| D | D01–D10 | 🧪 | nhóm `d`, thư mục `designs/`: BRIEF, INTERVIEWER, REFERENCE, RUBRIC, schema.sql, queries.sql; `bash tools/verify-designs.sh` xanh (verify.sh không áp dụng cho Tier D). Xem `tools/reports/d.md` |

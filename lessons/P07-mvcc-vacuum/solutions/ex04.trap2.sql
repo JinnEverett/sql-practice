@@ -1,0 +1,1 @@
+REINDEX TABLE p07.bloat;
