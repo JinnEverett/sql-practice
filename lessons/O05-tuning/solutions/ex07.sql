@@ -1,0 +1,3 @@
+-- db: lab
+-- mode: manual
+-- Bài thí nghiệm thật; đối chiếu với solutions/ex07.md.
