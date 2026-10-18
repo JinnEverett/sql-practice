@@ -1,0 +1,3 @@
+-- db: lab
+-- mode: manual
+-- Bài thực hành bằng dòng lệnh (pg_dump chạy trong container); không có câu SQL để chấm.

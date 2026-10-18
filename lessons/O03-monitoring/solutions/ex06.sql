@@ -1,0 +1,3 @@
+-- db: lab
+-- mode: manual
+-- Bài thực hành quan sát hệ thống; đối chiếu với solutions/ex06.md.
