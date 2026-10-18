@@ -11,7 +11,7 @@ Trạng thái: ⬜ chưa soạn · 🟡 đang soạn · ✅ soạn xong (đủ R
 | I | I01–I07 | 🧪 | có từ trước |
 | I | I08 | 🟡 | có `solutions/` + `setup.sql`, **thiếu README, exercises, hints** → nhóm `o` |
 | I | I09 | ⬜ | nhóm `o` |
-| P | P01–P10 | ⬜ | nhóm `p` |
+| P | P01–P10 (P10a, P10b) | 🧪 | nhóm `p`; `verify.sh` xanh trên Postgres 18.6 (71 đạt, 18 tự đối chiếu). Chưa verify trên `shop_l`. Xem `tools/reports/p.md` |
 | R | R01–R12 | ⬜ | nhóm `r` |
 | O | O01–O06 | ⬜ | nhóm `o` |
 | D | D01–D10 | ⬜ | nhóm `d`, thư mục `designs/` |
